@@ -1,11 +1,9 @@
 const express = require('express');
-const Campsite = require('../models/campsites');
+const Campsite = require('../models/campsite');
 
 const campsiteRouter = express.Router();
 
-
 campsiteRouter.route('/')
-
     .get((req, res, next) => {
         Campsite.find()
             .then(campsites => {
@@ -21,22 +19,14 @@ campsiteRouter.route('/')
                 console.log('Campsite Created ', campsite);
                 res.statusCode = 200;
                 res.setHeader('Content-Type', 'application/json');
-                res.json(campsites);
-            })
-            .catch(err => next(err));
-    })
-    .put((req, res, next) => {
-        Campsite.findByIdAndUpdate(req.params.campsiteId, {
-            $set: req.body
-        }, { new: true })
-            .then(campsite => {
-                res.statusCode = 200;
-                res.setHeader('Content-Type', 'application/json');
                 res.json(campsite);
             })
             .catch(err => next(err));
     })
-
+    .put((req, res) => {
+        res.statusCode = 403;
+        res.end('PUT operation not supported on /campsites');
+    })
     .delete((req, res, next) => {
         Campsite.deleteMany()
             .then(response => {
@@ -47,6 +37,7 @@ campsiteRouter.route('/')
             .catch(err => next(err));
     });
 
+//routing for paths with a campsite id
 campsiteRouter.route('/:campsiteId')
     .get((req, res, next) => {
         Campsite.findById(req.params.campsiteId)
@@ -221,7 +212,7 @@ campsiteRouter.route('/:campsiteId/comments/:commentId')
                 }
             })
             .catch(err => next(err));
-    });
 
+    });
 
 module.exports = campsiteRouter;
